@@ -112,7 +112,7 @@ async function uploadToPlayStore(options: EditOptions, releaseFiles: string[]): 
                 const res = await androidPublisher.edits.commit({
                     auth: options.auth,
                     editId: appEditId,
-                    packageName: options.applicationId,
+                    packageName: options.applicationId
                     //changesNotSentForReview: options.changesNotSentForReview Error: Changes are sent for review automatically. The query parameter changesNotSentForReview must not be set.
                 });
     
