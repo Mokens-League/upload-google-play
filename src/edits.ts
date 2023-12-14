@@ -107,20 +107,31 @@ async function uploadToPlayStore(options: EditOptions, releaseFiles: string[]): 
 
         // Commit the pending Edit
         core.info(`Committing the Edit`)
-        const res = await androidPublisher.edits.commit({
-            auth: options.auth,
-            editId: appEditId,
-            packageName: options.applicationId,
-            changesNotSentForReview: options.changesNotSentForReview
-        });
-
-        // Simple check to see whether commit was successful
-        if (res.data.id) {
-            core.info(`Successfully committed ${res.data.id}`);
-            return res.data.id
-        } else {
-            core.setFailed(`Error ${res.status}: ${res.statusText}`);
-            return Promise.reject(res.status);
+        for (let retry = 0; retry < 5; retry++) {
+            try {
+                const res = await androidPublisher.edits.commit({
+                    auth: options.auth,
+                    editId: appEditId,
+                    packageName: options.applicationId,
+                    changesNotSentForReview: options.changesNotSentForReview
+                });
+    
+                if (res.data.id) {
+                    core.info(`Successfully committed ${res.data.id}`);
+                    return res.data.id;
+                } else {
+                    const errorMessage = `Error ${res.status}: ${res.statusText}`;
+                    core.setFailed(errorMessage);
+                    throw new Error(errorMessage);
+                }
+            } catch (error) {
+                if (retry === 4) {
+                    core.setFailed(`Final attempt failed with error: ${error}`);
+                    return Promise.reject(error);
+                }
+                core.info(`Attempt ${retry + 1} failed, retrying...`);
+                await new Promise(resolve => setTimeout(resolve, 3000));
+            }
         }
     }
 
