@@ -74,6 +74,8 @@ export async function runUpload(
 async function uploadToPlayStore(options: EditOptions, releaseFiles: string[]): Promise<string | void> {
     const internalSharingDownloadUrls: string[] = []
     
+    core.info("Mokens-League/upload-google-play :: uploadToPlayStore")
+
     // Check the 'track' for 'internalsharing', if so switch to a non-track api
     if (options.track === 'internalsharing') {
         core.debug("Track is Internal app sharing, switch to special upload api")
