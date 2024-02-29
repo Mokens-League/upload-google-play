@@ -372,6 +372,12 @@ async function getOrCreateEdit(options: EditOptions): Promise<string> {
         packageName: options.applicationId
     })
 
+    core.info(`Debug on:`)
+    core.info(`-------------------------------------------------`)
+    core.info(insertResult.statusText)
+    core.info(`-------------------------------------------------`)
+    core.info(insertResult.status.toString())
+    
     // If we didn't get status 200, i.e. success, propagate the error with valid text
     if (insertResult.status != 200) {
         throw Error(insertResult.statusText)
